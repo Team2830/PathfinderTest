@@ -43,8 +43,8 @@ public class DriveTrain extends Subsystem {
 		talonLeft.setInverted(false);
 		victorLeft.setInverted(false);
 
-		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		talonRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		talonRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
@@ -61,7 +61,7 @@ public class DriveTrain extends Subsystem {
 		talonRight.setSensorPhase(true);
 
 		talonRight.configPeakOutputForward(1, 10);
-		talonRight.configPeakOutputReverse(-1, 0);
+		talonRight.configPeakOutputReverse(-1, 10);
 		
 		gyro = new AHRS(SerialPort.Port.kUSB1);
 	}
@@ -84,6 +84,10 @@ public class DriveTrain extends Subsystem {
 		talonLeft.set(output);
 	}
 	
+	public void stopDriving(){
+		talonLeft.set(0);
+		talonRight.set(0);
+	}
 	public void setRight(double output){
 		talonRight.set(output);
 	}

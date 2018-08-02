@@ -4,6 +4,7 @@ import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -31,11 +32,20 @@ public class FollowTrajectory extends Command {
     	Robot.driveTrain.writeToSmartDashboard();
 		Waypoint[] points = new Waypoint[] {
 				new Waypoint(0, 0, 0),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-				new Waypoint(1, 0, 0),	// Waypoint @ x=-2, y=-2, exit angle=0 radians
+				new Waypoint(10, 0, 0),	// Waypoint @ x=-2, y=-2, exit angle=0 radians
 				new Waypoint(0, 0, 0)
 		};
     	
-		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 10.36, 2.0, 60.0);
+		// Arguments:
+		// Fit Method:          HERMITE_CUBIC or HERMITE_QUINTIC
+		// Sample Count:        SAMPLES_HIGH (100 000)
+//		                      SAMPLES_LOW  (10 000)
+//		                      SAMPLES_FAST (1 000)
+		// Time Step:           0.02 Seconds
+		// Max Velocity:        10.36 f/s
+		// Max Acceleration:    2.0 f/s/s
+		// Max Jerk:            60.0 f/s/s/s
+		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 5, 2.0, 60.0);
 		Trajectory trajectory = Pathfinder.generate(points, config);
 		// Setting wheel base distance/
 		TankModifier modifier = new TankModifier(trajectory).modify(1.9375);
@@ -47,7 +57,7 @@ public class FollowTrajectory extends Command {
     	// 'getEncPosition' function.
     	// 1000 is the amount of encoder ticks per full revolution
     	// Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
-    	left.configureEncoder(Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER), 1440, .5);
+    	left.configureEncoder(Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER), 4096, .5);
     	right.configureEncoder(Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER), 4096, .5);
     	
     	// The first argument is the proportional gain. Usually this will be quite high
@@ -56,8 +66,8 @@ public class FollowTrajectory extends Command {
     	// The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
 //    	      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
     	// The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
-    	left.configurePIDVA(2.0, 0.0, 20.0, 1 / 10.36, 0);
-    	right.configurePIDVA(2.0, 0.0, 20.0, 1/10.36, 0);
+    	left.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
+    	right.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -72,14 +82,15 @@ public class FollowTrajectory extends Command {
     	double turn = 0.8 * (-1.0/80.0) * angleDifference;
 
     	Robot.driveTrain.setLeft(l); //+ turn);
-    	Robot.driveTrain.setRight(r); // - turn);
+    	Robot.driveTrain.setRight(r);//  - turn);
     	
-    	//if (counter % 1 == 0){
+    	if (counter % 10 == 0){
     		System.out.printf("Left Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
     		System.out.printf("Left Output: %f\t", l);
     		System.out.printf("Right Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
-    		System.out.printf("Right Output: %f", r);
-    	//}
+    		System.out.printf("Right Output: %f\n", r);
+    		System.out.println("end");
+    	}
     	counter++;
     	Robot.driveTrain.writeToSmartDashboard();
     }
@@ -93,10 +104,13 @@ public class FollowTrajectory extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.driveTrain.stopDriving();
+    	Robot.driveTrain.writeToSmartDashboard();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	Robot.driveTrain.stopDriving();
     }
 }

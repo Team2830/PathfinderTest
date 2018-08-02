@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
 	public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
 	public static OI m_oi;
 	public static DriveTrain driveTrain = new DriveTrain();
+	int counter;
 
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -111,6 +112,7 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+		driveTrain.resetCounters();
 	}
 
 	/**
@@ -119,6 +121,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		driveTrain.writeToSmartDashboard();
+		
+		if (counter % 10 == 0){
+    		System.out.printf("Left Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
+    		System.out.printf("Right Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
+    		System.out.println("end");
+    	}
+    	counter++;
 	}
 
 	/**
