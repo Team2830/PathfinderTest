@@ -43,6 +43,11 @@ public class DriveTrain extends Subsystem {
 		talonLeft.setInverted(false);
 		victorLeft.setInverted(false);
 
+		/**
+		 * TODO:
+		 * 
+		 * These should be changed to relative, per the CTRE docs
+		 */
 		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 		talonRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 

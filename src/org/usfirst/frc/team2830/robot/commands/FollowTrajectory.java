@@ -56,7 +56,11 @@ public class FollowTrajectory extends Command {
     	// Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the
     	// 'getEncPosition' function.
     	// 1000 is the amount of encoder ticks per full revolution
-    	// Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+		// Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+		
+		/**
+		 * TODO: This needs to be updated to 1024
+		 */
     	left.configureEncoder(Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER), 4096, .5);
     	right.configureEncoder(Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER), 4096, .5);
     	
@@ -65,7 +69,11 @@ public class FollowTrajectory extends Command {
     	// The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
     	// The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
 //    	      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
-    	// The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
+		// The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
+		
+		/**
+		 * These need to be reset to have the velocity ratio stay at 1/10.36
+		 */
     	left.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
     	right.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
     }
