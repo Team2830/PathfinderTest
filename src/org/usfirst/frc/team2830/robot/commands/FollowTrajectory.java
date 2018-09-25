@@ -47,7 +47,7 @@ public class FollowTrajectory extends Command {
 		// Max Acceleration:    2.0 f/s/s
 		// Max Jerk:            60.0 f/s/s/s
 		//Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 5, 2.0, 60.0);
-		//Trajectory trajectory = Pathfinder.generate(points, config);
+		//Trajectory trajectory = Pathfinder.generate(points, config); 
 		File myFile = new File("/home/lvuser/myfile.csv");
 		Trajectory trajectory = Pathfinder.readFromCSV(myFile);
 		// Setting wheel base distance/
