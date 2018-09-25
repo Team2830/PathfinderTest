@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2830.robot.commands;
 
+import java.io.File;
+
 import org.usfirst.frc.team2830.robot.Robot;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 
@@ -32,8 +34,7 @@ public class FollowTrajectory extends Command {
     	Robot.driveTrain.writeToSmartDashboard();
 		Waypoint[] points = new Waypoint[] {
 				new Waypoint(0, 0, 0),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-				new Waypoint(10, 0, 0),	// Waypoint @ x=-2, y=-2, exit angle=0 radians
-				new Waypoint(0, 0, 0)
+				new Waypoint(10, 0, 0)
 		};
     	
 		// Arguments:
@@ -45,10 +46,12 @@ public class FollowTrajectory extends Command {
 		// Max Velocity:        10.36 f/s
 		// Max Acceleration:    2.0 f/s/s
 		// Max Jerk:            60.0 f/s/s/s
-		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 5, 2.0, 60.0);
-		Trajectory trajectory = Pathfinder.generate(points, config);
+		//Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 5, 2.0, 60.0);
+		//Trajectory trajectory = Pathfinder.generate(points, config);
+		File myFile = new File("/home/lvuser/myfile.csv");
+		Trajectory trajectory = Pathfinder.readFromCSV(myFile);
 		// Setting wheel base distance/
-		TankModifier modifier = new TankModifier(trajectory).modify(1.9375);
+		TankModifier modifier = new TankModifier(trajectory).modify(2.05);
     	
 		left = new EncoderFollower(modifier.getLeftTrajectory());
     	right = new EncoderFollower(modifier.getRightTrajectory());
@@ -66,8 +69,8 @@ public class FollowTrajectory extends Command {
     	// The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
 //    	      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
     	// The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
-    	left.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
-    	right.configurePIDVA(0.2, 0.0, 0.0, 1/5, 0);
+    	left.configurePIDVA(3.6, 0.0, 0.2, 1/10.36, .1);
+    	right.configurePIDVA(3.6, 0.0, 0.2, 1/10.36, .1);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -75,20 +78,32 @@ public class FollowTrajectory extends Command {
     	double l = left.calculate(Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
     	double r = right.calculate(Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
 
+
     	double gyro_heading = Robot.driveTrain.getAngle();    // Assuming the gyro is giving a value in degrees
     	double desired_heading = Pathfinder.r2d(left.getHeading());  // Should also be in degrees
 
     	double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
     	double turn = 0.8 * (-1.0/80.0) * angleDifference;
 
-    	Robot.driveTrain.setLeft(l); //+ turn);
-    	Robot.driveTrain.setRight(r);//  - turn);
+    	Robot.driveTrain.setLeft(l + turn);
+    	Robot.driveTrain.setRight(r - turn);
     	
-    	if (counter % 10 == 0){
-    		System.out.printf("Left Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
-    		System.out.printf("Left Output: %f\t", l);
-    		System.out.printf("Right Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
-    		System.out.printf("Right Output: %f\n", r);
+    	if (counter % 10 == 0 && !left.isFinished() && !right.isFinished()){
+    		System.out.printf("Left Vel: %f\t", left.getSegment().velocity);
+    		System.out.printf("Left Acc: %f\t", left.getSegment().acceleration);
+    		System.out.printf("Left Pos: %f\t", left.getSegment().position);
+    		
+ //   		System.out.printf("Left Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
+ //   		System.out.printf("Left Output: %f\t", l);
+//    		System.out.printf("R-Y: %f\t", right.getSegment().y );
+//    		System.out.printf("L-Y: %f\t", left.getSegment().y );
+//    		System.out.printf("R-X: %f\t", right.getSegment().x );
+//    		System.out.printf("L-X: %f\t", left.getSegment().x );
+
+    		//	System.out.printf("Right Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
+    	//	System.out.printf("Right Output: %f\t", r);
+    	//	System.out.printf("Angle Diff: %f\t",angleDifference);
+    	//	System.out.printf("angle correction: %f\n", turn);
     		System.out.println("end");
     	}
     	counter++;
@@ -98,13 +113,16 @@ public class FollowTrajectory extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if(left.isFinished() && right.isFinished()){
+        	System.out.println("finished reach called");
     		return true;
+
     	}return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
     	Robot.driveTrain.stopDriving();
+    	System.out.println("end called");
     	Robot.driveTrain.writeToSmartDashboard();
     }
 
