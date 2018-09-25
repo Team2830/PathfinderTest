@@ -56,7 +56,7 @@ public class FollowTrajectory extends Command {
 		left = new EncoderFollower(modifier.getLeftTrajectory());
     	right = new EncoderFollower(modifier.getRightTrajectory());
     	
-    	// Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the
+    	// Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the 
     	// 'getEncPosition' function.
     	// 1000 is the amount of encoder ticks per full revolution
     	// Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
