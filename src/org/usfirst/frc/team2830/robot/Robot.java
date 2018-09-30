@@ -46,11 +46,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
-<<<<<<< HEAD
 		m_chooser.addDefault("Default Auto", new FollowTrajectory("/home/lvuser/myfile.csv"));
-=======
-		m_chooser.addDefault("Default Auto", new FollowTrajectory());
->>>>>>> refs/remotes/origin/master
 		//m_chooser.addDefault("Default Auto", new SpinTenTimes());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
