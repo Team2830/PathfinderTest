@@ -19,6 +19,7 @@ import jaci.pathfinder.modifiers.TankModifier;
 
 import org.usfirst.frc.team2830.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2830.robot.commands.FollowTrajectory;
+import org.usfirst.frc.team2830.robot.commands.SpinTenTimes;
 import org.usfirst.frc.team2830.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team2830.robot.subsystems.ExampleSubsystem;
 
@@ -45,7 +46,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
-		m_chooser.addDefault("Default Auto", new FollowTrajectory());
+		m_chooser.addDefault("Default Auto", new FollowTrajectory("/home/lvuser/myfile.csv"));
+		//m_chooser.addDefault("Default Auto", new SpinTenTimes());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
 
@@ -124,6 +126,7 @@ public class Robot extends TimedRobot {
 		driveTrain.writeToSmartDashboard();
 		
 		if (counter % 10 == 0){
+
     		System.out.printf("Left Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.LEFT_ENCODER));
     		System.out.printf("Right Encoder: %d\t", Robot.driveTrain.getEncoderValue(DriveTrain.RIGHT_ENCODER));
     		System.out.println("end");

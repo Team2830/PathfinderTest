@@ -43,13 +43,8 @@ public class DriveTrain extends Subsystem {
 		talonLeft.setInverted(false);
 		victorLeft.setInverted(false);
 
-		/**
-		 * TODO:
-		 * 
-		 * These should be changed to relative, per the CTRE docs
-		 */
-		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-		talonRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		talonLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		talonRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
 		victorLeft.follow(talonLeft);
 		victorRight.follow(talonRight);
@@ -82,7 +77,7 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public double getAngle(){
-		return gyro.getYaw();
+		return gyro.getAngle();
 	}
 	
 	public void setLeft(double output){
